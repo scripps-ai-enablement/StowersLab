@@ -1,0 +1,9 @@
+# Python dependencies. `samtools` is a separate binary, not pip-installable:
+#   conda install -c bioconda samtools   |   apt install samtools   |   brew install samtools
+# Without it, vr_analyze.py stops at its preflight guard; --no-bam runs
+# anyway but degrades the result (no individual-receptor calls).
+pandas>=1.5
+numpy>=1.21
+matplotlib>=3.5
+pyyaml>=5.4
+scipy>=1.8

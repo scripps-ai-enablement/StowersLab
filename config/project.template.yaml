@@ -1,0 +1,94 @@
+# project.template.yaml -- the analysis contract, shipped with the pipeline.
+# vr_init.py copies these blocks VERBATIM into every generated config so
+# thresholds cannot drift from what bin/ reads. Site-specific fields
+# (project, work, reference, trials, samples) are filled in by vr_init.py.
+# Edit a threshold HERE to change the default for all future work folders.
+
+paths:
+  gene_counts: star_salmon/salmon.merged.gene_counts.tsv
+  gene_tpm: star_salmon/salmon.merged.gene_tpm.tsv
+  gene_counts_scaled: star_salmon/salmon.merged.gene_counts_scaled.tsv
+  tx2gene: star_salmon/tx2gene.tsv
+  star_logs: star_salmon/log                    # <sample>.Log.final.out
+  qualimap: star_salmon/qualimap                # <sample>/rnaseq_qc_results.txt
+  multiqc_data: multiqc/star_salmon/multiqc_report_data
+  per_sample_salmon: star_salmon                # <sample>/quant.sf, quant.genes.sf
+
+markers:
+  pan_vno_neuron: [Trpc2]
+  mature_neuron: [Omp]
+  v1r_population: [Gnai2]
+  v2r_population: [Gnao1]
+  housekeeping_actin: [Actb, Actg1, Acta1, Acta2, Actc1, Actg2]
+  # ---- tissue identity (appended 2026-08-20) ----
+  # OMP-Cre drives GFP in mature MAIN OLFACTORY (MOE) neurons as well as VNO
+  # neurons, so a GFP+ sort from the wrong tissue (or MOE-contaminated
+  # tissue) yields Omp-high / Trpc2-zero cells. The tissue check therefore
+  # runs BEFORE sort validation (Rule 1). Families are summed across the
+  # whole family by prefix match on gene_name; no individual paralog within
+  # these families is trustworthy at 75bp.
+  vr_families: [Vmn1r, Vmn2r]                # VNO-specific receptor families
+  moe_receptor_families: [Olfr]              # main olfactory receptor family
+  moe_transduction: [Adcy3, Cnga2, Gnal]     # main olfactory transduction
+  # Omp is TISSUE-SHARED: it marks mature olfactory neurons of BOTH the main
+  # olfactory epithelium and the VNO, so it CANNOT discriminate the two
+  # tissues. Treating high Omp as evidence of a VNO population is a known
+  # error mode -- it is what makes a main-olfactory library look like a
+  # successful GFP+ VNO sort.
+  tissue_shared: [Omp]
+  # Gnai2/Gnao1 are deliberately NOT tissue markers: they split V1R vs V2R
+  # populations WITHIN the VNO and are broadly expressed elsewhere (Gnai2
+  # reads 165 CPM in a GFP- library carrying no VR signal at all).
+
+thresholds:
+  # Rule 1 — sort validation (CPM)
+  target_trpc2_min: 1000
+  target_trpc2_concern: 100
+  nontarget_trpc2_max: 10
+  # Rule 3 / failed-library gate
+  failed_lib_actin_cpm_max: 100
+  failed_lib_trpc2_cpm_max: 10
+  # Rule 4 — population call on Gnai2:Gnao1
+  v1r_dominant_ratio_min: 2.0
+  v2r_dominant_ratio_max: 0.5
+  # Sort-purity check on VR signal
+  nontarget_total_vr_cpm_max: 100
+  # Expected cluster counts by sample type
+  expected_clusters:
+    nontarget_100cell: [0, 0]
+    target_2cell: [1, 2]
+    target_100cell: [5, 25]
+  # Cluster definition
+  cluster_max_gap_bp: 200000
+  # ---- tissue identity (appended 2026-08-20) ----
+  # Absolute CPM floor, not a bare ratio: below the floor a marker panel is
+  # noise and a ratio of two noise values carries no tissue information.
+  tissue_panel_floor_cpm: 100.0
+  # both panels above the floor -> one must exceed the other by this factor
+  tissue_dominance_ratio: 3.0
+
+# ---- appended after reference-dir verification (2026-08-20) ----
+
+qc_thresholds:
+  # library viability
+  min_input_reads: 1000000
+  min_uniquely_mapped_pct: 50.0
+  # a library whose ALL-GENE assigned count total is below this is DEGENERATE:
+  # its CPMs are ratios of a near-empty library and carry no information even
+  # when they look large. Biology is suppressed for such a sample.
+  min_assigned_counts: 1000000
+  # alignment quality
+  max_multi_loci_pct: 40.0
+  max_too_many_loci_pct: 5.0
+  max_unmapped_too_short_pct: 40.0
+  max_mismatch_rate_pct: 2.0
+  # qualimap 5'-3' bias; healthy ~= 1
+  bias_5p3p_low: 0.5
+  bias_5p3p_high: 2.0
+  # genomic origin
+  min_exonic_pct: 40.0
+  max_intergenic_pct: 30.0
+  # Gnai2:Gnao1 ratio needs this many raw Gnao1 reads before its MAGNITUDE is
+  # quotable; below it the direction of the call still holds but the ratio is
+  # Poisson-unstable.
+  ratio_min_support_reads: 10

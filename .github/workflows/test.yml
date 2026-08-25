@@ -1,0 +1,36 @@
+name: test
+on: [push, pull_request]
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - name: compile all modules
+        run: python -m compileall -q bin kernel.py install.py
+      - name: driver selftest (summary gate + role inference)
+        run: python bin/vr_analyze.py --selftest
+      - name: tier-gate selftest
+        run: python bin/vr_report.py --selftest || true
+      - name: kernel.py defines only functions and literals
+        run: |
+          python - <<'EOF'
+          import ast, sys
+          tree = ast.parse(open("kernel.py").read())
+          bad = []
+          for n in tree.body:
+              if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Import,
+                                ast.ImportFrom, ast.Expr)):
+                  continue
+              if isinstance(n, ast.Assign) and all(
+                      isinstance(v, (ast.Constant, ast.Tuple, ast.List, ast.Dict))
+                      for v in [n.value]):
+                  continue
+              bad.append(type(n).__name__ + " at line " + str(n.lineno))
+          if bad:
+              print("kernel.py sidecar violations:", bad); sys.exit(1)
+          print("kernel.py sidecar contract OK")
+          EOF

@@ -1,0 +1,119 @@
+VR GTF parse + cluster definition report
+script: build_vr_reference.py v1.0.0
+config: <work>/config/project.yaml  (parsed via pyyaml)
+genome_key: mouse-ensembl-grcm38-r91
+gtf: <references>/Mus_musculus/Ensembl/GRCm38/Annotation/Genes/genes.gtf
+cluster_max_gap_bp: 200000
+
+== GTF pass ==
+total rows scanned (non-comment): 1500259
+VR-matching rows: 4164
+VR rows by feature type: CDS=1061, UTR=244, exon=1552, start_codon=361, stop_codon=358, transcript=588
+distinct VR gene_ids: 541
+
+== genes per family ==
+V1R: 319 genes (114 pseudogene, 205 functional)
+V2R: 222 genes (100 pseudogene, 122 functional)
+
+== pseudogene criterion (which rule fired) ==
+none: 327
+biotype: 2
+name: 3
+biotype+name: 209
+
+== chromosome distribution ==
+V1R: chr1=1, chr2=1, chr4=3, chr5=1, chr6=77, chr7=143, chr13=64, chr17=24, chr18=3, chrX=1, chrGL456219.1=1
+V2R: chr2=1, chr3=18, chr4=7, chr5=15, chr6=13, chr7=98, chr10=8, chr13=2, chr14=3, chr17=52, chrX=1, chrY=2, chrCHR_MG4222_MG3908_PATCH=1, chrJH584292.1=1
+
+== transcript-span vs exon-span disagreements ==
+n_disagreements: 0
+
+== multi-locus / inconsistent gene records ==
+n_flagged: 0
+
+== clusters ==
+V1R: 24 clusters; singletons=7; largest=[64, 37, 29, 24, 23, 23, 21, 21]
+  clusters per chrom: chr1=1, chr2=1, chr4=1, chr5=1, chr6=5, chr7=10, chr13=1, chr17=1, chr18=1, chrX=1, chrGL456219.1=1
+  top clusters by gene count:
+    V1R_chr13_cl020  n=64 (func=33, ps=31) span=1.21Mb  Vmn1r-ps92..Vmn1r-ps135
+    V1R_chr7_cl015  n=37 (func=31, ps=6) span=1.51Mb  Vmn1r91..Vmn1r132
+    V1R_chr7_cl012  n=29 (func=13, ps=16) span=0.75Mb  Vmn1r-ps53..Vmn1r-ps68
+    V1R_chr17_cl021  n=24 (func=13, ps=11) span=0.92Mb  Vmn1r-ps141..Vmn1r-ps150
+    V1R_chr6_cl009  n=23 (func=15, ps=8) span=0.57Mb  Vmn1r-ps25..Vmn1r54
+    V1R_chr7_cl016  n=23 (func=18, ps=5) span=1.42Mb  Vmn1r135..Vmn1r166
+    V1R_chr6_cl006  n=21 (func=17, ps=4) span=0.52Mb  Vmn1r4..Vmn1r-ps11
+    V1R_chr6_cl007  n=21 (func=11, ps=10) span=0.66Mb  Vmn1r21..Vmn1r-ps23
+    V1R_chr7_cl017  n=18 (func=16, ps=2) span=0.57Mb  Vmn1r-ps84..Vmn1r183
+    V1R_chr7_cl010  n=14 (func=11, ps=3) span=0.86Mb  Vmn1r55..Vmn1r65
+V2R: 37 clusters; singletons=18; largest=[36, 35, 18, 17, 13, 12, 12, 12]
+  clusters per chrom: chr2=1, chr3=1, chr4=6, chr5=2, chr6=1, chr7=10, chr10=2, chr13=2, chr14=1, chr17=6, chrX=1, chrY=2, chrCHR_MG4222_MG3908_PATCH=1, chrJH584292.1=1
+  top clusters by gene count:
+    V2R_chr7_cl020  n=36 (func=12, ps=24) span=1.44Mb  Vmn2r-ps62..Vmn2r76
+    V2R_chr17_cl028  n=35 (func=21, ps=14) span=2.55Mb  Vmn2r124..Vmn2r110
+    V2R_chr3_cl002  n=18 (func=7, ps=11) span=0.85Mb  Vmn2r-ps3..Vmn2r-ps13
+    V2R_chr7_cl014  n=17 (func=9, ps=8) span=1.09Mb  Vmn2r41..Vmn2r37
+    V2R_chr6_cl011  n=13 (func=9, ps=4) span=0.92Mb  Vmn2r19..Vmn2r27
+    V2R_chr5_cl009  n=12 (func=10, ps=2) span=0.78Mb  Vmn2r8..Vmn2r-ps23
+    V2R_chr7_cl013  n=12 (func=8, ps=4) span=0.67Mb  Vmn2r29..Vmn2r36
+    V2R_chr17_cl030  n=12 (func=5, ps=7) span=0.56Mb  Vmn2r-ps128..Vmn2r117
+    V2R_chr7_cl018  n=11 (func=4, ps=7) span=0.76Mb  Vmn2r-ps54..Vmn2r-ps60
+    V2R_chr7_cl015  n=9 (func=7, ps=2) span=0.42Mb  Vmn2r46..Vmn2r52
+
+== intergenic gap distribution (basis for cluster_max_gap_bp) ==
+Dietschi et al. 2022 place cluster boundaries with a data-driven aggregation
+threshold on this distribution (their Fig. 1C) rather than a fixed round number.
+V1R: n_gaps=307 median=25,333 q25=15,574 q75=40,255 q90=89,359 q95=183,393 max=53,779,468
+  gaps > 200,000 bp (i.e. cluster breaks): 13
+  gaps in 200kb-800kb (reassigned by the supercluster tier): 5
+V2R: n_gaps=205 median=43,339 q25=22,660 q75=65,946 q90=297,745 q95=1,884,111 max=50,893,162
+  gaps > 200,000 bp (i.e. cluster breaks): 23
+  gaps in 200kb-800kb (reassigned by the supercluster tier): 11
+
+== threshold sensitivity sweep ==
+n = clusters over ALL assembly units; nP = primary assembly only (chr 1-19,X,Y,MT).
+Published counts are comparable to nP, not n.
+gap_kb   V1R n/nP/singl/largest     V2R n/nP/singl/largest
+    50    67/ 66/ 22/ 34              97/ 95/ 56/ 14
+   100    37/ 36/  8/ 64              46/ 44/ 23/ 35
+   150    30/ 29/  8/ 64              39/ 37/ 18/ 36
+   200    24/ 23/  7/ 64              37/ 35/ 18/ 36
+   300    22/ 21/  7/ 78              34/ 32/ 17/ 36
+   400    20/ 19/  6/ 78              30/ 28/ 13/ 36
+   500    20/ 19/  6/ 78              29/ 27/ 12/ 36
+   800    19/ 18/  6/ 78              26/ 24/ 12/ 40
+  1000    18/ 17/  6/ 78              26/ 24/ 12/ 40
+NOTE: primary tier uses cluster_max_gap_bp=200000 from config (unchanged).
+      supercluster tier uses 800000 bp, giving 19 V1R superclusters over all assembly units and 18 on the primary assembly.
+      The primary-assembly figure is the one comparable to the 18 mouse V1r
+      clusters reported by Dietschi et al. 2022; the extra all-units cluster is
+      a lone V1R gene on unplaced scaffold GL456219.1.
+
+== prior-label reconciliation ==
+  Vmn1r91 -> V1R_chr7_cl015 (chr7, cluster n_genes=37, supercluster=V1R_chr7_sc013)
+  Vmn1r166 -> V1R_chr7_cl016 (chr7, cluster n_genes=23, supercluster=V1R_chr7_sc013)
+  Vmn1r32 -> V1R_chr6_cl008 (chr6, cluster n_genes=9, supercluster=V1R_chr6_sc007)
+  Vmn1r39 -> V1R_chr6_cl008 (chr6, cluster n_genes=9, supercluster=V1R_chr6_sc007)
+  Vmn1r91 and Vmn1r166 share supercluster V1R_chr7_sc013 (n=78 genes);
+  at the 200kb primary tier they are two clusters split by a 217,366 bp gap.
+
+== quant-table crosscheck (expected Vmn1r=318, Vmn2r=220) ==
+trial1: <project>/results/trail1/star_salmon/salmon.merged.gene_tpm.tsv [ok]
+  quant Vmn1r=318  Vmn2r=220  total=538
+  in quant not GTF (by gene_id): 0 []
+  in GTF not quant (by gene_id): 3 ['ENSMUSG00000096730', 'ENSMUSG00000096776', 'ENSMUSG00000099175']
+  in quant not GTF (by gene_name): 0 []
+  in GTF not quant (by gene_name): 2 ['Vmn1r186', 'Vmn2r122']
+trial2: <project>/results/trail2/star_salmon/salmon.merged.gene_tpm.tsv [ok]
+  quant Vmn1r=318  Vmn2r=220  total=538
+  in quant not GTF (by gene_id): 0 []
+  in GTF not quant (by gene_id): 3 ['ENSMUSG00000096730', 'ENSMUSG00000096776', 'ENSMUSG00000099175']
+  in quant not GTF (by gene_name): 0 []
+  in GTF not quant (by gene_name): 2 ['Vmn1r186', 'Vmn2r122']
+
+== outputs ==
+  <work>/ref/vr_gene_annotation.tsv
+  <work>/ref/vr_clusters.tsv
+  <work>/ref/vr_gene_to_cluster.tsv
+  ./vr_gene_annotation.tsv
+  ./vr_clusters.tsv
+  ./vr_gene_to_cluster.tsv
