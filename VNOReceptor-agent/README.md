@@ -22,7 +22,8 @@ pipeline**. Either works alone.
 No Claude Science account needed. Runs on a laptop, a login node, or in a SLURM job.
 
 ```bash
-git clone <this repo> && cd VNOReceptor-agent
+git clone https://github.com/scripps-ai-enablement/StowersLab.git
+cd StowersLab/VNOReceptor-agent
 
 # dependencies (pick one)
 conda create -n vr python=3.11 pandas numpy matplotlib pyyaml scipy -c conda-forge
@@ -108,7 +109,7 @@ root, so the repo root **is** the skill:
 SKILL.md         the skill definition (frontmatter name + description, then guidance)
 kernel.py        helper functions, loaded into the kernel when the skill loads
 install.py       registers the two files above into your catalog
-CLAUDE.md        project context for Claude Code (picked up automatically)
+CLAUDE.md        project context for Claude Code (start it from THIS directory)
 deploy/          AGENT_USAGE.md (Claude Science / Claude Code) + shared-module install
 bin/             16 modules; vr_analyze.py is the one-command entry point
 config/          project.template.yaml — every threshold, one place

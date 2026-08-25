@@ -114,12 +114,17 @@ persona, not the capability.
 ## Claude Code
 
 Claude Code runs in your terminal and drives the pipeline through its
-command-line interface. There is no skill to install: clone the repo and the
-`CLAUDE.md` at its root is picked up as project context, so the agent starts out
-knowing the entry point, the exit-code contract and the interpretation rules.
+command-line interface. There is no skill to install: `CLAUDE.md` sits in
+`VNOReceptor-agent/` and is picked up as project context when you start Claude
+Code from that directory, so the agent begins knowing the entry point, the
+exit-code contract and the interpretation rules.
+
+Start it from `VNOReceptor-agent/`, not from the repository root — launched a
+level up, Claude Code reads the repo root instead and never sees `CLAUDE.md`.
 
 ```bash
-git clone <this repo> && cd VNOReceptor-agent
+git clone https://github.com/scripps-ai-enablement/StowersLab.git
+cd StowersLab/VNOReceptor-agent
 claude
 ```
 
