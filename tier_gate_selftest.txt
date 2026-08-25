@@ -1,0 +1,37 @@
+[PASS] clean_target reaches tier 4 -- highest=4
+[PASS] clean_target invokes both VR producers -- tier3 calls=1, tier4 calls=1
+[PASS] wrong_tissue fails tier 0 -- FAIL
+[PASS] wrong_tissue suppresses tiers 1-4 -- {0: 'FAIL', 1: 'SUPPRESSED', 2: 'SUPPRESSED', 3: 'SUPPRESSED', 4: 'SUPPRESSED'}
+[PASS] wrong_tissue never invokes a VR producer -- tier3 calls=0, tier4 calls=0
+[PASS] wrong_tissue suppression names tier 0 -- {1: 0, 2: 0, 3: 0, 4: 0}
+[PASS] wrong_tissue reports no tier -- -1
+[PASS] wrong_tissue reason states wrong tissue, not failed sort -- tissue_verdict=MOE -- the main-olfactory marker panel is above the tissue floor 
+[PASS] failed_library passes tier 0 -- PASS
+[PASS] failed_library fails tier 1 -- FAIL
+[PASS] failed_library suppresses tiers 2-4 -- {2: 'SUPPRESSED', 3: 'SUPPRESSED', 4: 'SUPPRESSED'}
+[PASS] failed_library never invokes a VR producer -- 0,0
+[PASS] failed_library tier-1 reason cites library_status -- library_status=FAILED -- actin sum 0.9 CPM < 100 AND Trpc2 0.16 CPM < 10. Every 
+[PASS] degenerate_library emits no receptor call -- 0
+[PASS] nontarget no_tissue_signal opens tier 0 with caveat -- PASS_WITH_CAVEAT
+[PASS] nontarget passes tier 1 -- PASS
+[PASS] nontarget low ratio support downgrades tier 2 to caveat -- PASS_WITH_CAVEAT
+[PASS] nontarget tier 2 caveat says the magnitude is not quotable -- population_call=V1R_dominant; Gnai2:Gnao1 = infinity but the denominator has too
+[PASS] target no_tissue_signal fails tier 0 -- FAIL
+[PASS] target no_tissue_signal is not called wrong-tissue -- tissue_verdict=no_tissue_signal -- both marker panels sit below the absolute CPM
+[PASS] sort_fail_only stops at tier 1 -- 0
+[PASS] sort_fail_only suppresses tier 3 producer -- 0
+[PASS] population_undetermined reports through tier 1 -- 1
+[PASS] population_undetermined suppresses cluster tier -- 0
+[PASS] population_undetermined suppression names tier 2 -- 2
+[PASS] empty verdicts fail closed at tier 0 -- FAIL
+[PASS] empty verdicts emit no receptor call -- 0
+[PASS] require(4) raises TierSuppressed on a wrong-tissue sample -- TierSuppressed raised with blocked_by=0
+[PASS] require(4) permits a clean sample once tier 3 has passed -- no raise
+[PASS] producer-raised TierSuppressed becomes a SUPPRESSED outcome -- SUPPRESSED
+[PASS] tier 4 emitted before tier 3 is suppressed -- SUPPRESSED
+[PASS] out-of-order tier 4 does not invoke its producer -- 0
+[PASS] out-of-order suppression names tier 3 as unevaluated -- suppressed by tier 3 (cluster_vr) NOT_EVALUATED: tier 3 (cluster_vr) has not been decided 
+[PASS] require(4) before tier 3 raises rather than KeyError -- TierSuppressed(blocked_by=3)
+[PASS] emit() cannot forge a pass on a sealed QC tier -- FAIL
+
+35 passed, 0 failed
