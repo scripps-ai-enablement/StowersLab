@@ -1,0 +1,15 @@
+# generated work folders
+vr_out_*/
+analysis/
+results/
+logs/
+# python
+__pycache__/
+*.pyc
+.venv/
+# editor / OS
+.DS_Store
+*.swp
+# backups the pipeline writes beside edited files
+*.bak_*
+*.prerun_backup/

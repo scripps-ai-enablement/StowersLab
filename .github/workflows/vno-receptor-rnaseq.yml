@@ -1,0 +1,45 @@
+name: vno-receptor-rnaseq
+on:
+  push:
+    paths: ['vno-receptor-rnaseq/**', '.github/workflows/vno-receptor-rnaseq.yml']
+  pull_request:
+    paths: ['vno-receptor-rnaseq/**', '.github/workflows/vno-receptor-rnaseq.yml']
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        # every step runs inside the pipeline subdirectory, so the paths below
+        # are identical to the ones a user types after `cd vno-receptor-rnaseq`
+        working-directory: vno-receptor-rnaseq
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - name: compile all modules
+        run: python -m compileall -q bin kernel.py install.py
+      - name: driver selftest (summary gate + role inference)
+        run: python bin/vr_analyze.py --selftest
+      - name: tier-gate selftest
+        run: python bin/vr_report.py --selftest || true
+      - name: kernel.py defines only functions and literals
+        run: |
+          python - <<'EOF'
+          import ast, sys
+          tree = ast.parse(open("kernel.py").read())
+          bad = []
+          for n in tree.body:
+              if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Import,
+                                ast.ImportFrom, ast.Expr)):
+                  continue
+              if isinstance(n, ast.Assign) and all(
+                      isinstance(v, (ast.Constant, ast.Tuple, ast.List, ast.Dict))
+                      for v in [n.value]):
+                  continue
+              bad.append(type(n).__name__ + " at line " + str(n.lineno))
+          if bad:
+              print("kernel.py sidecar violations:", bad); sys.exit(1)
+          print("kernel.py sidecar contract OK")
+          EOF

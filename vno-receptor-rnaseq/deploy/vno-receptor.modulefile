@@ -1,0 +1,40 @@
+#%Module1.0#####################################
+##
+## vno-receptor modulefile
+##
+## Site adaptation: set `vno_path` below to where you installed the payload,
+## and adjust the two dependency module names to your site's python and
+## samtools modules. Nothing else needs changing.
+##
+proc ModulesHelp { } {
+puts stderr "Puts the VNO receptor RNA-seq pipeline on PATH and loads its"
+puts stderr "python + samtools dependencies."
+puts stderr ""
+puts stderr "  module load vno-receptor"
+puts stderr "  vr_analyze.py --results <nfcore results dir> --gtf <genes.gtf>"
+}
+set _module_name  [module-info name]
+set is_module_rm  [module-info mode remove]
+
+#################################################
+# EDIT THESE THREE LINES FOR YOUR SITE
+set vno_path      /path/to/software/vno-receptor/1.0.0
+set python_module python/3.11.4
+set samtools_module samtools/1.19
+#################################################
+
+# The pipeline needs pandas, numpy, matplotlib, pyyaml and scipy. A site's
+# default python usually has none of them, hence an explicit module.
+if { ![is-loaded $python_module] } {module load $python_module}
+# samtools is required for the unique-read evidence channel; without it
+# vr_analyze.py stops at its preflight guard.
+if { ![is-loaded $samtools_module] } {module load $samtools_module}
+
+setenv VNO_RECEPTOR_HOME $vno_path
+
+prepend-path    PATH        $vno_path/bin
+prepend-path    PYTHONPATH  $vno_path/bin
+
+unset vno_path
+unset python_module
+unset samtools_module
