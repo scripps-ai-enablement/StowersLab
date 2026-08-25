@@ -1,8 +1,17 @@
-name: test
-on: [push, pull_request]
+name: VNOReceptor-agent
+on:
+  push:
+    paths: ['VNOReceptor-agent/**', '.github/workflows/vnoreceptor-agent.yml']
+  pull_request:
+    paths: ['VNOReceptor-agent/**', '.github/workflows/vnoreceptor-agent.yml']
 jobs:
   selftest:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        # every step runs inside the pipeline subdirectory, so these paths match
+        # exactly what a user types after `cd VNOReceptor-agent`
+        working-directory: VNOReceptor-agent
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

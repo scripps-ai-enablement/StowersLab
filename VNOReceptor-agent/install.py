@@ -14,14 +14,32 @@ SKILL = "vno-receptor-rnaseq"
 
 
 def _repo_root():
-    """Directory holding SKILL.md. Tries cwd, then common relative spots."""
-    for c in (".", SKILL, os.path.join("..", SKILL), os.path.dirname(os.path.abspath("install.py"))):
-        if os.path.isfile(os.path.join(c, "SKILL.md")):
-            return c
+    """Directory holding SKILL.md and kernel.py.
+
+    Searched by CONTENT, not by directory name: this tree may be vendored into
+    a larger repository under any folder name, so hardcoding the skill name as
+    a directory guess breaks the moment someone renames or nests it.
+    Order: cwd, then any immediate subdirectory, then the parent.
+    """
+    def _ok(c):
+        return (os.path.isfile(os.path.join(c, "SKILL.md"))
+                and os.path.isfile(os.path.join(c, "kernel.py")))
+
+    if _ok("."):
+        return "."
+    try:
+        subs = sorted(d for d in os.listdir(".") if os.path.isdir(d))
+    except OSError:
+        subs = []
+    for d in subs:
+        if _ok(d):
+            return d
+    if _ok(".."):
+        return ".."
     raise SystemExit(
-        "cannot find SKILL.md.\n"
-        "  cd into the cloned repo and re-run, or call:\n"
-        "     install(repo_dir='/abs/path/to/vno-receptor-rnaseq')"
+        "cannot find SKILL.md + kernel.py.\n"
+        "  cd into the directory holding them and re-run, or pass the path:\n"
+        "     install(repo_dir='/abs/path/to/the/pipeline/folder')"
     )
 
 

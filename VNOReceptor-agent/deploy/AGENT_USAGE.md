@@ -25,7 +25,7 @@ In a Claude Science session, in the **`repl`** tool — not a `python` cell, bec
 the installer needs the `host` object:
 
 ```python
-exec(open("/abs/path/to/vno-receptor-rnaseq/install.py").read())
+exec(open("/abs/path/to/VNOReceptor-agent/install.py").read())
 ```
 
 Expected output:
@@ -119,7 +119,7 @@ command-line interface. There is no skill to install: clone the repo and the
 knowing the entry point, the exit-code contract and the interpretation rules.
 
 ```bash
-git clone <this repo> && cd vno-receptor-rnaseq
+git clone <this repo> && cd VNOReceptor-agent
 claude
 ```
 

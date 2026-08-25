@@ -119,7 +119,7 @@ flag vocabulary.
 **Install (once per user).** In a Claude Science session, in the `repl` tool:
 
 ```python
-exec(open("/abs/path/to/vno-receptor-rnaseq/install.py").read())
+exec(open("/abs/path/to/VNOReceptor-agent/install.py").read())
 ```
 
 That reads the shipped `SKILL.md` and `kernel.py`, writes them into your own
